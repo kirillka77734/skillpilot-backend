@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: skillpilot-backend
+    env: node
+    plan: free
+    region: frankfurt
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    envVars:
+      - key: API_KEY
+        sync: false
+      - key: FOLDER_ID
+        sync: false
