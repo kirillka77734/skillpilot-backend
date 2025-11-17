@@ -17,22 +17,27 @@ app.post("/gpt", async (req, res) => {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Api-Key " + process.env.API_KEY,
-                    "OpenAI-Project": process.env.FOLDER_ID
+                    "X-Folder-Id": process.env.FOLDER_ID
                 },
                 body: JSON.stringify({
                     model: `gpt://${process.env.FOLDER_ID}/yandexgpt/rc`,
-                    input: [
+                    messages: [
                         { role: "user", text: userMessage }
-                    ]
+                    ],
+                    temperature: 0.3,
+                    max_output_tokens: 200
                 })
             }
         );
 
         const data = await yandex.json();
         res.json(data);
+
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: err.toString() });
     }
 });
 
-app.listen(10000, () => console.log("Server running"));
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log("Server running on port", PORT));
