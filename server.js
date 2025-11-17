@@ -8,7 +8,7 @@ app.use(express.json());
 
 app.post("/gpt", async (req, res) => {
     try {
-        const userMessage = req.body.messages?.[0]?.text || "";
+        const userMessage = req.body.messages?.[0]?.text;
 
         const yandex = await fetch(
             "https://llm.api.cloud.yandex.net/v1/chat/completions",
@@ -23,9 +23,7 @@ app.post("/gpt", async (req, res) => {
                     model: `gpt://${process.env.FOLDER_ID}/yandexgpt/rc`,
                     messages: [
                         { role: "user", text: userMessage }
-                    ],
-                    temperature: 0.3,
-                    max_output_tokens: 200
+                    ]
                 })
             }
         );
@@ -40,4 +38,4 @@ app.post("/gpt", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("Server running on port", PORT));
+app.listen(PORT, () => console.log("Server running", PORT));
