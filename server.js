@@ -8,7 +8,9 @@ app.use(express.json());
 
 app.post("/gpt", async (req, res) => {
     try {
-        const response = await fetch(
+        const userMessage = req.body.messages?.[0]?.text || "";
+
+        const yandex = await fetch(
             "https://llm.api.cloud.yandex.net/v1/chat/completions",
             {
                 method: "POST",
@@ -18,23 +20,19 @@ app.post("/gpt", async (req, res) => {
                     "OpenAI-Project": process.env.FOLDER_ID
                 },
                 body: JSON.stringify({
-                    model: req.body.model,
-                    messages: req.body.messages,
-                    temperature: req.body.temperature ?? 0.3,
-                    max_output_tokens: req.body.max_output_tokens ?? 200
+                    model: `gpt://${process.env.FOLDER_ID}/yandexgpt/rc`,
+                    input: [
+                        { role: "user", text: userMessage }
+                    ]
                 })
             }
         );
 
-        const data = await response.json();
+        const data = await yandex.json();
         res.json(data);
-
     } catch (err) {
-        console.error("Backend error:", err);
-        res.status(500).json({ error: "Backend error: " + err.toString() });
+        res.status(500).json({ error: err.toString() });
     }
 });
 
-// Render MUST use process.env.PORT
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on port", PORT));
+app.listen(10000, () => console.log("Server running"));
